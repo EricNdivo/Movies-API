@@ -12,3 +12,8 @@ class Rating(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
 
+class comment(models.Model):
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    comment = models.TextField(max_length=300)
+    comment_date = models.IntegerField()
