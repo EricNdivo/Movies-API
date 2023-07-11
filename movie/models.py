@@ -16,4 +16,4 @@ class comment(models.Model):
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     comment = models.TextField(max_length=300)
-    comment_date = models.IntegerField()
+    #comment_date = models.IntegerField()
