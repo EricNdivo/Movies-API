@@ -9,7 +9,7 @@ from .models import Rating, Movie
 from .serializers import MovieSerializer, RatingSerializer 
 import numpy as np
 from sklearn.neighbors import NearestNeighbors
-
+from rest_framework.views import APIView
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
@@ -65,3 +65,43 @@ class RecommendationViewSet(viewsets.ViewSet):
             similar_movies.extend([neighbor for neighbor in neighbors[1] if neighbor != movie.id])
 
         return similar_movies
+
+'''class login(APIView):
+    def get(self, request):
+        if 'logged_in' in request.COOKIES and 'Access_Token' in request.COOKIES:
+            context = {
+                'Access_Token': request.COOKIES['Access_Token'],
+                'logged_in':request.COOKIES.get('logged_in')
+            }
+            return render(request, 'abc.html', context)
+        else:
+            return render(request, 'login.html')
+    def post(self,request,format=None):
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        print(email,password)
+        user = User.objects.filter(email=email).first()
+
+        if user is None:
+            raise AuthenticationFailed('User not found')
+        if not user.check_password(password):
+            raise AuthenticationFailed('Incorrect Password')
+
+        refresh = RefreshTken.for_user(user)
+        global ACCESS_TOKEN_GLOBAL
+        ACCESS_TOKEN_GLOBAL=str(refresh.access_token)
+        response=render(request, 'base.html')
+        response.set_cookie('Acess_Token',str(refreh.access_token))
+        response.set_cookie('logged_in',True)
+        return response
+
+class logout(APIView):
+    def post(self, request):
+        try:
+            response=HttpResponseRedirect(reverse('login'))
+
+            response.delete_cookie('Access_token')
+            response.delete_cookie('login')
+        except:
+            return response({"status": status.HTTP_400_BAD_REQUEST})'''
+
