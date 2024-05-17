@@ -66,7 +66,7 @@ class RecommendationViewSet(viewsets.ViewSet):
 
         return similar_movies
 
-'''class login(APIView):
+class login(APIView):
     def get(self, request):
         if 'logged_in' in request.COOKIES and 'Access_Token' in request.COOKIES:
             context = {
@@ -103,5 +103,7 @@ class logout(APIView):
             response.delete_cookie('Access_token')
             response.delete_cookie('login')
         except:
-            return response({"status": status.HTTP_400_BAD_REQUEST})'''
+            return response({"status": status.HTTP_400_BAD_REQUEST})
 
+def secret(APIView):
+    pass

@@ -1,4 +1,4 @@
-import requests
+'''import requests
 
 url = 'http://127.0.0.1:8000/api/movies/'
 headers = {
@@ -7,4 +7,4 @@ headers = {
 
 response = requests.get(url, headers=headers)
 
-print(response.json())
+print(response.json())'''
