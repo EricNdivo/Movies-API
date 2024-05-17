@@ -25,6 +25,7 @@ router.register(r'ratings', RatingViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('admin',admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('api-token/', CustomAuthToken.as_view(), name='api-token'),
     path('api/movies/', MovieViewSet.as_view({'get': 'list', 'post': 'create'}), name='movie-list'),
