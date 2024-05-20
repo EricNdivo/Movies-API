@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from movie.views import MovieViewSet, RatingViewSet
-from movie.views import CustomAuthToken, MovieViewSet, RatingViewSet, RecommendationViewSet
+from movie.views import CustomAuthToken, MovieViewSet, RatingViewSet, RecommendationViewSet,ProfileView, RegisterView
 router = routers.DefaultRouter()
 router.register(r'movies', MovieViewSet)
 router.register(r'ratings', RatingViewSet)
@@ -17,4 +17,6 @@ urlpatterns = [
     path('api/ratings/', RatingViewSet.as_view({'get': 'list', 'post': 'create'}), name='rating-list'),
     path('api/ratings/<int:pk>/', RatingViewSet.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}), name='rating-detail'),
     path('api/recommendations/<int:user_id>/', RecommendationViewSet.as_view({'get': 'list'}), name='recommendation-list'),
+    path('api/profile',ProfileView.as_view(),name='profile'),
+    path('api/register',RegisterView.as_view(),name='register'),
 ]

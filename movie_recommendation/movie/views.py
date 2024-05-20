@@ -1,4 +1,4 @@
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
@@ -10,6 +10,9 @@ from .serializers import MovieSerializer, RatingSerializer
 import numpy as np
 from sklearn.neighbors import NearestNeighbors
 from rest_framework.views import APIView
+from django.contrib.auth.models import User
+from .serializers import UserSerializer
+from rest_framework.permissions import IsAuthenticated, AllowAny
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
@@ -17,6 +20,19 @@ class CustomAuthToken(ObtainAuthToken):
         user = serializer.validated_data['user']
         token, created = Token.objects.get_or_create(user=user)
         return Response({'token': token.key})
+
+class RegisterView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]
+
+class ProfileView(generics.RetrieveUpdateAPIView):
+    queryset = User.objects.all
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
 
 class MovieViewSet(viewsets.ModelViewSet):
     queryset = Movie.objects.all()
@@ -105,5 +121,3 @@ class logout(APIView):
         except:
             return response({"status": status.HTTP_400_BAD_REQUEST})
 
-def secret(APIView):
-    pass
