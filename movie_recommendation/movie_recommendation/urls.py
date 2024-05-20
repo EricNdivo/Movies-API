@@ -2,10 +2,11 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from movie.views import MovieViewSet, RatingViewSet
-from movie.views import CustomAuthToken, MovieViewSet, RatingViewSet, RecommendationViewSet,ProfileView, RegisterView
+from movie.views import CustomAuthToken, MovieViewSet, RatingViewSet, RecommendationViewSet,ProfileView, RegisterView, TopRatedMoviesViewSet
 router = routers.DefaultRouter()
 router.register(r'movies', MovieViewSet)
 router.register(r'ratings', RatingViewSet)
+router.register(r'top-rated',TopRatedMoviesViewSet,basename='movie-search')
 
 urlpatterns = [
     path('', include(router.urls)),
