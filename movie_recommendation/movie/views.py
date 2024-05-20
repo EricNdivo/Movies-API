@@ -12,6 +12,7 @@ from sklearn.neighbors import NearestNeighbors
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
 from .serializers import UserSerializer
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, AllowAny
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
@@ -120,9 +121,45 @@ class RecommendationViewSet(viewsets.ViewSet):
             similar_movies.extend([neighbor for neighbor in neighbors[1] if neighbor != movie.id])
 
         return similar_movies
-class TopRatedMoviesViewSet(viewsets.ViewSet):
-    def list(self, request):
-        top_rated_movies = Movie.objects.order_by('_average_rating')[:10]
-        serializer = MovieSerializer(top_rated_movies, many=True)
-        return Response(serializer.data)
 
+class TopRatedMoviesViewSet(viewsets.ViewSet):
+    @action(detail=False, methods=['get'], url_path='top-rated', url_name='top-rated')
+    def top_rated(self, request):
+        top_rated_movies = Movie.objects.annotate(average_rating=Avg('rating__rating')).order_by('-average_rating')[:10]
+        serializer= MovieSerializer(top_rated_movies, many=True)
+        return Response(serailizer.data)
+        
+class ReviewViewSet(viewsets.ModelViewSet):
+    queryset = Rating.objects.all()
+    serializer_class = RatingSerializer
+
+    def create(self, request, *args, **kwargs):
+        user = request.user
+        movie_id = request.data.get('movie_id')
+        rating = request.data.get('rating')
+        review = requet.data.get('review')
+
+        rating_obj, created = Rating.objects.update_or_create(
+            user=user,
+            movie_id=movie_id,
+            defaults={'rating':rating, 'review':review}
+        )
+
+        return Response({'status':'review created' if created else 'review updated'})
+class GenreRecommendationViewSet(viewsets.ViewSet):
+    def list(self, request, genre=None):
+        if genre:
+            recommended_movies= Movie.objects.filter(genre__icontains=genre)
+        else:
+            return Response({'error':'Genre not provided'}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = MovieSerializer(recommended_movies, many=True)
+        return Response(serializer.data)              
+class MovieSearchViewSet(viewsets.ViewSet):
+    def list(self, request):
+        query = request.query_params.get('query', None)
+        if query:
+            movies = Movie.objects.filter(title__icontains=query)
+        else:
+            movies = Movie.objects.all()
+        serializer = MovieSerializer(movies, many=True)
+        return response(serializr.data)
