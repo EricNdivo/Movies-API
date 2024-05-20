@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User  # Ensure to import User if you are using it in your models
+from django.contrib.auth.models import User  
 
 class Movie(models.Model):
     title = models.CharField(max_length=255)
@@ -27,7 +27,11 @@ class Rating(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
+    review = models.TextField(null=True, blank=True)
 
+    def __str__(self):
+        return f'{self.user} - {self.movie} - {self.rating}'
+        
 class MovieType(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)

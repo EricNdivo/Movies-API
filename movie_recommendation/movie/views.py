@@ -133,19 +133,25 @@ class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Rating.objects.all()
     serializer_class = RatingSerializer
 
-    def create(self, request, *args, **kwargs):
+    def create(self,request, *args, **kwargs):
         user = request.user
         movie_id = request.data.get('movie_id')
         rating = request.data.get('rating')
-        review = requet.data.get('review')
+        review = request.data.get('review')
 
-        rating_obj, created = Rating.objects.update_or_create(
-            user=user,
-            movie_id=movie_id,
-            defaults={'rating':rating, 'review':review}
-        )
+        if not movie_id:
+            return Response({'error':'movie_id is required'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            rating_obj, created = Rating.objects.update_or_create(
+                user=user,
+                movie_id=movie_id,
+                defaults={'rating':rating, 'review':review}
+            )
+        except Exception as e:
+            return Response({'error':str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response({'status':'review created' if created else 'review updated'})
+
 class GenreRecommendationViewSet(viewsets.ViewSet):
     def list(self, request, genre=None):
         if genre:
