@@ -1,7 +1,7 @@
 from rest_framework import status, generics
 from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
@@ -132,6 +132,8 @@ class TopRatedMoviesViewSet(viewsets.ViewSet):
 class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Rating.objects.all()
     serializer_class = RatingSerializer
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def create(self,request, *args, **kwargs):
         user = request.user
@@ -168,4 +170,4 @@ class MovieSearchViewSet(viewsets.ViewSet):
         else:
             movies = Movie.objects.all()
         serializer = MovieSerializer(movies, many=True)
-        return response(serializr.data)
+        return response(serializer.data)

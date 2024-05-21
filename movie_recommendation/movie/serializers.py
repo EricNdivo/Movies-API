@@ -10,7 +10,7 @@ class RatingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Rating
         fields = ['id', 'user', 'movie', 'rating', 'review']
-        
+
 class TypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = MovieType
@@ -35,3 +35,6 @@ class UserSerializer(serializers.ModelSerializer):
                 last_name=validated_data('last_name', ''),
             )
             return user
+class MovieTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = '__all__'
