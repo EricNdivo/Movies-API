@@ -13,6 +13,7 @@ from rest_framework.views import APIView
 from django.contrib.auth.models import User
 from .serializers import UserSerializer
 from rest_framework.decorators import action
+from rest_framework.parsers import MultiPartParser, FormParser
 from django.contrib.auth.tokens import default_token_generator
 from rest_framework.permissions import IsAuthenticated, AllowAny
 class CustomAuthToken(ObtainAuthToken):
@@ -186,3 +187,20 @@ class PasswordResetView(APIView):
             message = render_to_string('reset_password_email.html', {'reset_link': reset_link})
             send_mail('Password Reset', message, 'no-reply@mysite.com', [email])
         return Response({'message': 'If a user with that email exists, a password reset link has been sent'})
+
+class ProfileView(generics.RetriveUpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser]
+
+    def get_objects(self):
+        return self.request.user
+
+    def put(self, request, *args, **kwargs):
+        user = self.get_object()
+        user.profile_picture = request.data.get('profile_picture')
+        user.save()
+        return Response(UserSerializer(user).data)
+        
+
