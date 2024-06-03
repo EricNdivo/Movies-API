@@ -281,3 +281,28 @@ class FetchNewMoviesView(APIView):
             return Response({'status': 'success', 'data': movies_data}, status=status.HTTP_200_OK)
         else:
             return Response({'status': 'error', 'message': 'Failed to fetch new movies'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class FetchNewMoviesViewSet(APIView):
+    def get(self, request):
+        response = request.get(url)
+        if response.status_code == 200:
+            movies_data = response.json()
+            for movie_data in movies_data:
+                Movie.objects.update_or_create(
+                    title=movie_data['title'],
+                    defaults={
+                        'description': movie_data['description'],
+                        'release_date': movie_data['release_data'],
+                    }
+                )
+            return Response({'status' :'success', 'data': movies_data}, status=status.HTP_200_OK)
+        else:
+            return Response9({'status': 'error', 'message': 'Failed to fetch new movies'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+
