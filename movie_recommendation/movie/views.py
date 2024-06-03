@@ -242,6 +242,28 @@ class FollowViewSet(viewsets.ModelViewSet):
         Follow.objects.filter(follower=request.user, folowee=followee).delete()
         return Response({'status': 'unfollowed'})
 
-        
 
+class AdvancedMovieSearchViewSet(viewsets.ViewSet):
+    def list(self, request):
+        query = request.query_params.get('query', None)
+        genre = request.query_params.get('genre', None)
+        min_rating = request.query_params.get('min_rating', None)
+        release_date = request.query_params.get('release_date', None)
+
+        movies = Movie.objects.all()
+
+        if query:
+            movies = movies.filter(title__icontains=query)
+        if query:
+            movies = movies.filter(genre__icontains=genre)
+        if min_rating:
+            movies = movies.filter(rating__gte=min-rating)
+        if release_date:
+            movies = movies.filter(release_date__gte=release_date)
+
+
+        serializer = MovieSerializer(movies, many=True)
+        return Response(serializer.data)
+
+        
 
