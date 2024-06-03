@@ -13,6 +13,7 @@ from rest_framework.views import APIView
 from django.contrib.auth.models import User
 from .serializers import UserSerializer
 from rest_framework.decorators import action
+from django.contrib.auth.tokens import default_token_generator
 from rest_framework.permissions import IsAuthenticated, AllowAny
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
@@ -161,7 +162,8 @@ class GenreRecommendationViewSet(viewsets.ViewSet):
         else:
             return Response({'error':'Genre not provided'}, status=status.HTTP_400_BAD_REQUEST)
         serializer = MovieSerializer(recommended_movies, many=True)
-        return Response(serializer.data)              
+        return Response(serializer.data)   
+
 class MovieSearchViewSet(viewsets.ViewSet):
     def list(self, request):
         query = request.query_params.get('query', None)
@@ -171,3 +173,16 @@ class MovieSearchViewSet(viewsets.ViewSet):
             movies = Movie.objects.all()
         serializer = MovieSerializer(movies, many=True)
         return response(serializer.data)
+
+class PasswordResetView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        email = request.data.get('email')
+        user = User.objects.filter(email=email).first()
+        if user:
+            token = defaul.token_generator.make_token(user)
+            reset_link = f"{request.build_absolute_uri('/reset-password/')}?token={token}&email={email}"
+            message = render_to_string('reset_password_email.html', {'reset_link': reset_link})
+            send_mail('Password Reset', message, 'no-reply@mysite.com', [email])
+        return Response({'message': 'If a user with that email exists, a password reset link has been sent'})

@@ -23,7 +23,7 @@ class MovieDurationSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'password']
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'password', 'profile_picture']
         extra_kwargs = {'password':{'write_only':True}}
 
         def create(self, validated_data):
