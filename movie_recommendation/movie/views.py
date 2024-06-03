@@ -188,7 +188,7 @@ class PasswordResetView(APIView):
             send_mail('Password Reset', message, 'no-reply@mysite.com', [email])
         return Response({'message': 'If a user with that email exists, a password reset link has been sent'})
 
-class ProfileView(generics.RetriveUpdateAPIView):
+class ProfileView(generics.RetrieveUpdateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
@@ -222,6 +222,26 @@ class EnhancedRecommendationViewSet(viewsets.ViewSet):
     def get_similar_movies_based_on_history(self, watched_movie_ids):
           return []
 
-          
+class FollowViewSet(viewsets.ModelViewSet):
+    queryset = Follow.objects.all()
+    serializer_class = FollowSerializer
+    permission_classes = [IsAuthenticated]
+
+    @action(detail=False, methods=['post'], url_path='follow')
+    def follow(self, request):
+        followee_id = request.data.get('followee_id')
+        followee = User.objects.get(id=followee_id)
+        follow, created = Follow.objects.get_or_create(follower=request.user, followee=followee)
+        return Response({'status': 'followed' if created else 'already following'})
+
+
+    @action(detail=False, methods=['post'], url_path='unfollow')
+    def unfollow(self, request):
+        followee_id = request.data.get('followee_id')
+        followee = User.objects.get(id=followee_id)
+        Follow.objects.filter(follower=request.user, folowee=followee).delete()
+        return Response({'status': 'unfollowed'})
+
+        
 
 
