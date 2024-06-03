@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from movie.views import MovieViewSet, RatingViewSet
-from movie.views import CustomAuthToken, MovieViewSet, RatingViewSet, RecommendationViewSet,ProfileView, RegisterView, TopRatedMoviesViewSet, GenreRecommendationViewSet, ReviewViewSet, MovieSearchViewSet, FollowViewSet, AdvancedMovieSearchViewSet, EnhancedRecommendationViewSet, PasswordResetView,FetchNewMoviesView
+from movie.views import CustomAuthToken, MovieViewSet, RatingViewSet, RecommendationViewSet,ProfileView, RegisterView, TopRatedMoviesViewSet, GenreRecommendationViewSet, ReviewViewSet, MovieSearchViewSet, FollowViewSet, AdvancedMovieSearchViewSet, EnhancedRecommendationViewSet, PasswordResetView,FetchNewMoviesViewSet
 router = routers.DefaultRouter()
 router.register(r'movies', MovieViewSet)
 router.register(r'ratings', RatingViewSet)
@@ -14,6 +14,8 @@ router.register(r'moviereviews',ReviewViewSet, basename='moviereview')
 router.register(r'follow', FollowViewSet, basename='follow')
 router.register(r'advanced-search', AdvancedMovieSearchViewSet, basename='enhanced-recommendation')
 router.register(r'enhanced-recommendations', EnhancedRecommendationViewSet, basename='enhanced-recomendation')
+router.register(r'fetch-new-movies', FetchNewMoviesViewSet, basename='fetch-new-movies')
+
 urlpatterns = [
     path('', include(router.urls)),
     path('admin',admin.site.urls),

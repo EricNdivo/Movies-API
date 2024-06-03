@@ -265,8 +265,19 @@ class AdvancedMovieSearchViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
 class FetchNewMoviesView(APIView):
-    permission_classes = [IsAdminUser]
-
-    def post(self, request):
-        fetch_new_movies.delay()
-        return Response({'status': 'Task initiated to fetch new movies'}, status=200)
+    def get(self, request):
+        url = 'https://api.example.com/new-movies'
+        response = requests.get(url)
+        if response.status_code == 200:
+            movies_data = response.json()
+            for movie_data in movies_data:
+                Movie.objects.update_or_create(
+                    title=movie_data['title'],
+                    defaults={
+                        'description': movie_data['description'],
+                        'release_date': movie_data['release_data'],
+                    }
+                )
+            return Response({'status': 'success', 'data': movies_data}, status=status.HTTP_200_OK)
+        else:
+            return Response({'status': 'error', 'message': 'Failed to fetch new movies'}, status=status.HTTP_400_BAD_REQUEST)
