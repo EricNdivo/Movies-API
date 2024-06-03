@@ -2,16 +2,15 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from movie.views import MovieViewSet, RatingViewSet
-from movie.views import CustomAuthToken, MovieViewSet, RatingViewSet, RecommendationViewSet,ProfileView, RegisterView, TopRatedMoviesViewSet, GenreRecommendationViewSet, ReviewViewSet
+from movie.views import CustomAuthToken, MovieViewSet, RatingViewSet, RecommendationViewSet,ProfileView, RegisterView, TopRatedMoviesViewSet, GenreRecommendationViewSet, ReviewViewSet, MovieSearchViewSet, FollowViewSet, AdvancedMovieSearchViewSet, EnhancedRecommendationViewSet, PasswordResetView,FetchNewMoviesView
 router = routers.DefaultRouter()
 router.register(r'movies', MovieViewSet)
 router.register(r'ratings', RatingViewSet)
 router.register(r'recommendations', RecommendationViewSet, basename='recommendation')
-router.register(r'search', MovieSearchViewSet, basename='search')
 router.register(r'reviews', ReviewViewSet, basename='review')
 router.register(r'genre-recommendations',GenreRecommendationViewSet, basename='genre-recommendation')
 router.register(r'top-rated',TopRatedMoviesViewSet,basename='top-rated')
-router.register(r'reviews',ReviewViewSet, basename='review')
+router.register(r'moviereviews',ReviewViewSet, basename='moviereview')
 router.register(r'follow', FollowViewSet, basename='follow')
 router.register(r'advanced-search', AdvancedMovieSearchViewSet, basename='enhanced-recommendation')
 router.register(r'enhanced-recommendations', EnhancedRecommendationViewSet, basename='enhanced-recomendation')
@@ -32,5 +31,5 @@ urlpatterns = [
     #path('api/reviews',ReviewViewSet.as_view(),name='review'),
     path('profile/', ProfileView.as_view(), name='profile'),
     path('password-reset/', PasswordResetView.as_view(), name='password-reset'),
-
+    path('fetch-new-movies', FetchNewMoviesView.as_view(), name='fetch-new-movies'),
 ]

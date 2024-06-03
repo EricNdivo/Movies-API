@@ -1,6 +1,6 @@
-from django.contrib import admin
-from .models import MovieType, Movie, Rating
+'''from django.contrib import admin
+from django_celery_beat.models import PeriodicTask, IntervalSchedule
 
-admin.site.register(MovieType)
-admin.site.register(Movie)
-admin.site.register(Rating)
+@admin.register(IntervalSchedule)
+class IntervalScheduleAdmin(admin.ModelAdmin):
+    list_display = ('every', 'period')'''
