@@ -202,5 +202,26 @@ class ProfileView(generics.RetriveUpdateAPIView):
         user.profile_picture = request.data.get('profile_picture')
         user.save()
         return Response(UserSerializer(user).data)
-        
+
+class EnhancedRecommendationViewSet(viewsets.ViewSet):
+    authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def list(self, request, user_id=None):
+        if not user_id:
+            return Response({'error': 'Missing user ID'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user_watch_history = Rating.objects.filter(user_id=user_id).values_list('movie_id', flat=True)
+        similar_movie_ids = self.get_similar_movie_based_on_history(user_watch_history)
+        recommended_movies = Movie.objects.filter(pk__in=similar_movie_ids).exclude(pk__in=user_watch_history) 
+
+
+        serializer = MovieSerializer(recommended_movies, many=True)
+        return Response(serializer.data)
+
+    def get_similar_movies_based_on_history(self, watched_movie_ids):
+          return []
+
+          
+
 
