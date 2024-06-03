@@ -38,4 +38,3 @@ urlpatterns = [
     path('password-reset/', PasswordResetView.as_view(), name='password-reset'),
     path('fetch-new-movies/', FetchNewMoviesView.as_view(), name='fetch-new-movies'),
 ]
-
