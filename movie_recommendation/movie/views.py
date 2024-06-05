@@ -19,6 +19,8 @@ from django.contrib.auth.tokens import default_token_generator
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from .tasks import fetch_new_movies
 import requests
+from datetime import datetime
+from django.utils import timezone
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
@@ -264,10 +266,12 @@ class AdvancedMovieSearchViewSet(viewsets.ViewSet):
         serializer = MovieSerializer(movies, many=True)
         return Response(serializer.data)
 
+from .models import MovieDuration
+
 class FetchNewMoviesView(APIView):
     def get(self, request):
         url = "https://api.themoviedb.org/3/movie/popular"
-        api_key = "b5edfc0cd34e24c1983e4416a0d489fd"
+        api_key = "#"
         params = {
             'api_key': api_key,
             'language': 'en-US',
@@ -278,17 +282,27 @@ class FetchNewMoviesView(APIView):
         if response.status_code == 200:
             movies_data = response.json().get('results', [])
             for movie_data in movies_data:
+                director = movie_data.get('director', 'Unknown')
+                synopsis = movie_data.get('synopsis', 'Unknown')
+                duration_data = movie_data.get('duration')
+                duration = None
+                if duration_data:
+                    duration, _ = MovieDuration.objects.get_or_create(duration=duration_data)
+                release_date = datetime.strptime(movie_data['release_date'], '%Y-%m-%d')
+                release_date_aware = timezone.make_aware(release_date, timezone=timezone.utc)
                 Movie.objects.update_or_create(
-                    title=movie_data.get('title'),
+                    title=movie_data.get('title', 'Unknown'),
                     defaults={
                         'description': movie_data.get('overview', ''),
-                        'release_date': movie_data.get('release_date',  ''),
+                        'release_date': release_date_aware,
+                        'director': director,
+                        'synopsis': synopsis,
+                        'duration': duration,
                     }
                 )
-            return Response({'status': 'success', 'data': movie_data}, status=status.HTTP_200_OK)
+            return Response({'status': 'success', 'data': movies_data}, status=status.HTTP_200_OK)
         else:
-            return Response({'status': 'error', 'message' : 'Failed to fetch new movies '}, status=status.HTTP_400_BAD_REQUEST)
-
+            return Response({'status': 'error', 'message': 'Failed to fetch new movies '}, status=status.HTTP_400_BAD_REQUEST)
 
 
 
