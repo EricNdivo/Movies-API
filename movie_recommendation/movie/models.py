@@ -4,7 +4,8 @@ from django.contrib.auth.models import User
 class Movie(models.Model):
     title = models.CharField(max_length=255)
     genre = models.CharField(max_length=100)
-    release_year = models.IntegerField()
+    description = models.TextField(null=True)
+    release_date = models.DateTimeField()
     director = models.CharField(max_length=255)
     synopsis = models.TextField()
     duration = models.OneToOneField('MovieDuration', on_delete=models.CASCADE, null=True, blank=True, related_name='movie_duration')

@@ -18,7 +18,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from django.contrib.auth.tokens import default_token_generator
 from rest_framework.permissions import IsAuthenticated, AllowAny, IsAdminUser
 from .tasks import fetch_new_movies
-
+import requests
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
@@ -266,42 +266,28 @@ class AdvancedMovieSearchViewSet(viewsets.ViewSet):
 
 class FetchNewMoviesView(APIView):
     def get(self, request):
-        url = 'https://api.example.com/new-movies'
-        response = requests.get(url)
+        url = "https://api.themoviedb.org/3/movie/popular"
+        api_key = "b5edfc0cd34e24c1983e4416a0d489fd"
+        params = {
+            'api_key': api_key,
+            'language': 'en-US',
+            'page': 1
+        }
+        response = requests.get(url, params=params)
+
         if response.status_code == 200:
-            movies_data = response.json()
+            movies_data = response.json().get('results', [])
             for movie_data in movies_data:
                 Movie.objects.update_or_create(
-                    title=movie_data['title'],
+                    title=movie_data.get('title'),
                     defaults={
-                        'description': movie_data['description'],
-                        'release_date': movie_data['release_data'],
+                        'description': movie_data.get('overview', ''),
+                        'release_date': movie_data.get('release_date',  ''),
                     }
                 )
-            return Response({'status': 'success', 'data': movies_data}, status=status.HTTP_200_OK)
+            return Response({'status': 'success', 'data': movie_data}, status=status.HTTP_200_OK)
         else:
-            return Response({'status': 'error', 'message': 'Failed to fetch new movies'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-class FetchNewMoviesViewSet(APIView):
-    def get(self, request):
-        response = request.get(url)
-        if response.status_code == 200:
-            movies_data = response.json()
-            for movie_data in movies_data:
-                Movie.objects.update_or_create(
-                    title=movie_data['title'],
-                    defaults={
-                        'description': movie_data['description'],
-                        'release_date': movie_data['release_data'],
-                    }
-                )
-            return Response({'status' :'success', 'data': movies_data}, status=status.HTP_200_OK)
-        else:
-            return Response9({'status': 'error', 'message': 'Failed to fetch new movies'}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
+            return Response({'status': 'error', 'message' : 'Failed to fetch new movies '}, status=status.HTTP_400_BAD_REQUEST)
 
 
 

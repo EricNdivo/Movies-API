@@ -40,7 +40,6 @@ class MovieTypeSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
 
-
 class FollowSerializer(serializers.ModelSerializer):
     follower = UserSerializer(read_only=True)
     followee = UserSerializer(read_only=True)
