@@ -1,3 +1,4 @@
+# movie_recommendation/urls.py
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
@@ -36,5 +37,5 @@ urlpatterns = [
     path('api/profile', ProfileView.as_view(), name='profile'),
     path('api/register', RegisterView.as_view(), name='register'),
     path('password-reset/', PasswordResetView.as_view(), name='password-reset'),
-    path('fetch-new-movies/', FetchNewMoviesView.as_view(), name='fetch-new-movies'),
+    path('fetch-new-movies/', FetchNewMoviesView.as_view(), name='fetch-new-movies'),  # Direct URL path for FetchNewMoviesView
 ]
