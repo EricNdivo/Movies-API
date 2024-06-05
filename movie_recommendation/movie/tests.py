@@ -4,7 +4,7 @@ from rest_framework.test import APITestCase
 from .models import Movie, Rating, User
 from django.utils import timezone
 from datetime import datetime
-
+from rest_framework.views import APIView
 class FetchNewMoviesViewTestCase(APITestCase):
     def test_fetch_new_movies_success(self):
         url = reverse('fetch-new-movies')

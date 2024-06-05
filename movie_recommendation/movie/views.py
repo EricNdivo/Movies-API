@@ -1,4 +1,5 @@
 from rest_framework import status, generics
+from rest_framework.generics import RetrieveAPIView
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
@@ -6,9 +7,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 from .models import Rating, Movie  
-from .serializers import MovieSerializer, RatingSerializer, FollowSerializer
+from .serializers import MovieSerializer, RatingSerializer, FollowSerializer, ProfileSerializer
 import numpy as np
-from .models import Movie, Rating, Follow
+from .models import Movie, Rating, Follow, Profile
 from sklearn.neighbors import NearestNeighbors
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
@@ -21,6 +22,7 @@ from .tasks import fetch_new_movies
 import requests
 from datetime import datetime
 from django.utils import timezone
+
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
@@ -73,13 +75,10 @@ class logout(APIView):
         except:
             return response({"status": status.HTTP_400_BAD_REQUEST})
 
-class ProfileView(generics.RetrieveUpdateAPIView):
-    queryset = User.objects.all
-    serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_object(self):
-        return self.request.user
+class ProfileView(RetrieveAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    lookup_field = 'pk'
 
 class MovieViewSet(viewsets.ModelViewSet):
     queryset = Movie.objects.all()

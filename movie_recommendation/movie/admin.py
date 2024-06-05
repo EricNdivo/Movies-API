@@ -1,6 +1,4 @@
-'''from django.contrib import admin
-from django_celery_beat.models import PeriodicTask, IntervalSchedule
+from django.contrib import admin
+from .models import Profile
 
-@admin.register(IntervalSchedule)
-class IntervalScheduleAdmin(admin.ModelAdmin):
-    list_display = ('every', 'period')'''
+admin.site.register(Profile)
