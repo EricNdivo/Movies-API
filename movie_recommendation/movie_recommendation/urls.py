@@ -33,8 +33,7 @@ urlpatterns = [
     path('api/recommendations/<int:user_id>/', RecommendationViewSet.as_view({'get': 'list'}), name='recommendation-list'),
     path('api/genre-recommendations/<str:genre>/', GenreRecommendationViewSet.as_view({'get': 'list'}), name='genre-recommendation-list'),
     path('api/top-rated/', TopRatedMoviesViewSet.as_view({'get': 'list'}), name='recommendation-list'),
-    path('api/profile/<int:pk>', ProfileView.as_view(), name='profile-detail'),
-    path('api/register', RegisterView.as_view(), name='register'),
+    path('profiles/<int:pk>/', ProfileView.as_view(), name='profile'),    path('api/register', RegisterView.as_view(), name='register'),
     path('password-reset/', PasswordResetView.as_view(), name='password-reset'),
     path('fetch-new-movies/', FetchNewMoviesView.as_view(), name='fetch-new-movies'), 
 ]

@@ -270,7 +270,7 @@ from .models import MovieDuration
 class FetchNewMoviesView(APIView):
     def get(self, request):
         url = "https://api.themoviedb.org/3/movie/popular"
-        api_key = "#"
+        api_key = "b5edfc0cd34e24c1983e4416a0d489fd"
         params = {
             'api_key': api_key,
             'language': 'en-US',

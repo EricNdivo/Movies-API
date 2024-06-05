@@ -5,6 +5,7 @@ from .models import Movie, Rating, User
 from django.utils import timezone
 from datetime import datetime
 from rest_framework.views import APIView
+
 class FetchNewMoviesViewTestCase(APITestCase):
     def test_fetch_new_movies_success(self):
         url = reverse('fetch-new-movies')
@@ -88,3 +89,27 @@ class MovieViewSetTestCases(APITestCase):
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Movie.objects.count(), 2)
+
+class MovieViewSetTestCases(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create(username='testuser')
+        self.client.force_authenticate(user=self.user)
+
+    def test_create_movie(self):
+        url = reverse('movie-list')
+        data = {'title': 'Test Movie', 'genre': 'Action', 'director': 'Test Director'}
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Movie.objects.count(), 1)
+        self.assertEqual(Movie.objects.get().title, 'Test Movie')
+    
+    def test_fetch_new_movies_success(self):
+        url = reverse('movie-list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+    
+    def test_fetch_new_movies_failed(self):
+        self.client.logout()
+        url = reverse('movie-list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
