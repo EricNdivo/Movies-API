@@ -68,3 +68,23 @@ class ProfileViewTestCase(APITestCase):
         data = {'username' : 'newusername'}
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['username'], 'newusername')
+    
+class MovieViewSetTestCases(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='testusername', email='test@example.com',  password='testpassword')
+        self.client.force_authenticate(user=self.user)
+        self.movie = Movie.objects.create(title='Test Movie', description='Test Description', release_date=timezone.now())
+    
+    def test_get_movies(self):
+        url = reverse('movie-list')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+
+
+    def test_create_movie(self):
+        url = reverse('movie-list')
+        data = {'title': 'New Movie', 'description': 'New Description', 'release_date': '2024-06-10T12:00:00Z'}    
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Movie.objects.count(), 2)
