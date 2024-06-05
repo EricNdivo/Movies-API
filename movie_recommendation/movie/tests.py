@@ -2,6 +2,8 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from .models import Movie, Rating, User
+from django.utils import timezone
+from datetime import datetime
 
 class FetchNewMoviesViewTestCase(APITestCase):
     def test_fetch_new_movies_success(self):
@@ -49,3 +51,20 @@ class LogoutViewTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_302_FOUND)
         self.assertNotIn('Acess_Token', response.cookies)
 
+class ProfileViewTestCase(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', email='test@example.com', password='password')
+        self.client.force_authenticate(user=self.user)
+
+    
+    def test_get_profile_success(self):
+        url = reverse('profile')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.asertEqual(response.data['username'], 'testuser')
+
+    def test_update_profile_success(self):
+        url = reverse('profile')
+        data = {'username' : 'newusername'}
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['username'], 'newusername')
