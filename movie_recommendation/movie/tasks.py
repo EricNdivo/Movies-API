@@ -23,4 +23,3 @@ def fetch_new_movies():
     else:
         print('Failed to fetch new movies from TMDb')
 
-

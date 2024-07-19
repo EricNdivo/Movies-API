@@ -22,6 +22,7 @@ from .tasks import fetch_new_movies
 import requests
 from datetime import datetime
 from django.utils import timezone
+from .models import MovieDuration
 
 class CustomAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
@@ -265,7 +266,6 @@ class AdvancedMovieSearchViewSet(viewsets.ViewSet):
         serializer = MovieSerializer(movies, many=True)
         return Response(serializer.data)
 
-from .models import MovieDuration
 
 class FetchNewMoviesView(APIView):
     def get(self, request):
@@ -302,6 +302,5 @@ class FetchNewMoviesView(APIView):
             return Response({'status': 'success', 'data': movies_data}, status=status.HTTP_200_OK)
         else:
             return Response({'status': 'error', 'message': 'Failed to fetch new movies '}, status=status.HTTP_400_BAD_REQUEST)
-
 
 
